@@ -5,23 +5,71 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sudoku Game</title>
   <link rel="stylesheet" href="styles.css"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-  <h1>Sudoku</h1>
-  <div class="controls">
-    <select id="difficulty" onchange="startNewGame()">
-      <option value="easy">Easy</option>
-      <option value="medium" selected>Medium</option>
-      <option value="hard">Hard</option>
-    </select>
-    <button onclick="startNewGame()">New Game</button>
-    <label><input type="checkbox" id="pencilToggle" /> Pencil Mode</label>
-    <div class="info">
-      <span id="timer">Time: 00:00</span>
-      <span id="errors">Errors: 0</span>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-th"></i> Sudoku</h1>
+      <p class="subtitle">Challenge your mind with this classic puzzle</p>
+    </header>
+
+    <div class="game-wrapper">
+      <div class="controls-panel">
+        <div class="control-group">
+          <label for="difficulty"><i class="fas fa-cog"></i> Difficulty</label>
+          <select id="difficulty" onchange="startNewGame()">
+            <option value="easy">Easy</option>
+            <option value="medium" selected>Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+
+        <button class="new-game-btn" onclick="startNewGame()">
+          <i class="fas fa-refresh"></i> New Game
+        </button>
+
+        <div class="pencil-mode">
+          <label class="toggle-switch">
+            <input type="checkbox" id="pencilToggle" />
+            <span class="slider"></span>
+            <span class="label-text"><i class="fas fa-pencil"></i> Pencil Mode</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="game-info">
+        <div class="info-card">
+          <i class="fas fa-clock"></i>
+          <span id="timer">00:00</span>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span id="errors">0</span>
+        </div>
+      </div>
+
+      <div class="board-container">
+        <div id="sudoku-board"></div>
+      </div>
+
+      <div class="game-actions">
+        <button class="action-btn hint-btn" onclick="getHint()">
+          <i class="fas fa-lightbulb"></i> Hint
+        </button>
+        <button class="action-btn clear-btn" onclick="clearCell()">
+          <i class="fas fa-eraser"></i> Clear
+        </button>
+        <button class="action-btn validate-btn" onclick="validateBoard()">
+          <i class="fas fa-check"></i> Validate
+        </button>
+      </div>
     </div>
   </div>
-  <div id="sudoku-board"></div>
+
   <script src="script.js"></script>
+  <footer class="footer">
+    <p>&copy; SUDOKO . A fun Project-hgp</p>
+  </footer>
 </body>
 </html>
