@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sudoku Game</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <h1>Sudoku</h1>
+  <div class="controls">
+    <button onclick="startNewGame()">New Game</button>
+    <label><input type="checkbox" id="pencilToggle" /> Pencil Mode</label>
+    <div class="info">
+      <span id="timer">Time: 00:00</span>
+      <span id="errors">Errors: 0</span>
+    </div>
+  </div>
+  <div id="sudoku-board"></div>
+  <script src="script.js"></script>
+</body>
+</html>
