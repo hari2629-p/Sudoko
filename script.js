@@ -4,7 +4,37 @@ let errorCount = 0;
 let timerInterval;
 let startTime;
 
+const sounds = {
+  correct: new Audio('sounds/correct.mp3'),
+  wrong: new Audio('sounds/wrong.mp3'),
+  complete: new Audio('sounds/complete.mp3')
+};
+
 function startNewGame() {
+  const savedState = JSON.parse(localStorage.getItem('sudoku-state'));
+  const savedErrors = localStorage.getItem('sudoku-errors');
+  const savedStartTime = localStorage.getItem('sudoku-start-time');
+
+  if (savedState && savedState.length === 81) {
+    puzzle = generatePuzzle();
+    solution = [...puzzle.solution];
+    renderBoard(puzzle.board);
+
+    const inputs = document.querySelectorAll('#sudoku-board input');
+    inputs.forEach((input, i) => {
+      if (!input.disabled && savedState[i]) {
+        input.value = savedState[i];
+        input.style.color = 'green';
+      }
+    });
+
+    errorCount = parseInt(savedErrors || 0);
+    startTime = parseInt(savedStartTime || Date.now());
+    document.getElementById("errors").innerText = `Errors: ${errorCount}`;
+    startTimer();
+    return;
+  }
+
   puzzle = generatePuzzle();
   solution = [...puzzle.solution];
   renderBoard(puzzle.board);
@@ -18,18 +48,22 @@ function generatePuzzle() {
   fillDiagonalBlocks(board);
   solveSudoku(board);
   const fullSolution = board.map(row => [...row]);
-  removeCells(board, 40); // remove 40 cells for medium difficulty
+
+  const difficulty = document.getElementById("difficulty")?.value || "medium";
+  let cellsToRemove = 40;
+  if (difficulty === "easy") cellsToRemove = 30;
+  else if (difficulty === "hard") cellsToRemove = 50;
+
+  removeCells(board, cellsToRemove);
   return { board, solution: fullSolution };
 }
 
 function fillDiagonalBlocks(board) {
-  for (let i = 0; i < 9; i += 3) {
-    fillBlock(board, i, i);
-  }
+  for (let i = 0; i < 9; i += 3) fillBlock(board, i, i);
 }
 
 function fillBlock(board, row, col) {
-  let nums = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+  let nums = shuffle([1,2,3,4,5,6,7,8,9]);
   for (let i = 0; i < 3; i++)
     for (let j = 0; j < 3; j++)
       board[row + i][col + j] = nums.pop();
@@ -47,7 +81,7 @@ function isSafe(board, row, col, num) {
   for (let x = 0; x < 9; x++) {
     if (board[row][x] === num || board[x][col] === num) return false;
     if (board[3 * Math.floor(row / 3) + Math.floor(x / 3)]
-             [3 * Math.floor(col / 3) + x % 3] === num) return false;
+        [3 * Math.floor(col / 3) + x % 3] === num) return false;
   }
   return true;
 }
@@ -125,15 +159,19 @@ function onInput(e) {
       e.target.style.color = 'red';
       errorCount++;
       document.getElementById("errors").innerText = `Errors: ${errorCount}`;
+      sounds.wrong.play();
     } else {
       e.target.style.color = 'green';
       e.target.disabled = true;
+      sounds.correct.play();
       checkCompletion();
     }
   } else {
     e.target.style.fontSize = '0.8rem';
     e.target.style.color = '#888';
   }
+
+  saveGame();
 }
 
 function checkCompletion() {
@@ -141,15 +179,26 @@ function checkCompletion() {
   for (let input of inputs) {
     const r = parseInt(input.dataset.row);
     const c = parseInt(input.dataset.col);
-    if (parseInt(input.value) !== solution[r][c]) {
-      return;
-    }
+    if (parseInt(input.value) !== solution[r][c]) return;
   }
 
+  localStorage.removeItem('sudoku-state');
+  localStorage.removeItem('sudoku-errors');
+  localStorage.removeItem('sudoku-start-time');
+
   setTimeout(() => {
+    sounds.complete.play();
     alert('🎉 Puzzle Completed! Generating new puzzle...');
     startNewGame();
   }, 300);
+}
+
+function saveGame() {
+  const inputs = document.querySelectorAll('#sudoku-board input');
+  const currentState = Array.from(inputs).map(input => input.value || "");
+  localStorage.setItem('sudoku-state', JSON.stringify(currentState));
+  localStorage.setItem('sudoku-errors', errorCount);
+  localStorage.setItem('sudoku-start-time', startTime);
 }
 
 function startTimer() {

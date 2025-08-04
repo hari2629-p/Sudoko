@@ -9,6 +9,11 @@
 <body>
   <h1>Sudoku</h1>
   <div class="controls">
+    <select id="difficulty" onchange="startNewGame()">
+      <option value="easy">Easy</option>
+      <option value="medium" selected>Medium</option>
+      <option value="hard">Hard</option>
+    </select>
     <button onclick="startNewGame()">New Game</button>
     <label><input type="checkbox" id="pencilToggle" /> Pencil Mode</label>
     <div class="info">

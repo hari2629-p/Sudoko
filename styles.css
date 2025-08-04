@@ -28,6 +28,21 @@ h1 {
   font-weight: bold;
 }
 
+.cell:nth-child(3n) {
+  border-right: 2px solid #333;
+}
+
+.cell:nth-child(n+19):nth-child(-n+27),
+.cell:nth-child(n+46):nth-child(-n+54) {
+  border-bottom: 2px solid #333;
+}
+
+.cell:nth-child(1),
+.cell:nth-child(28),
+.cell:nth-child(55) {
+  border-left: 2px solid #333;
+}
+
 .cell input {
   position: absolute;
   top: 0; left: 0;
@@ -60,4 +75,20 @@ h1 {
   display: flex;
   gap: 10px;
   margin-top: 10px;
+}
+
+@media (max-width: 600px) {
+  #sudoku-board {
+    width: 95vw;
+  }
+  .cell input {
+    font-size: 4.5vw;
+  }
+  .controls {
+    flex-direction: column;
+    gap: 10px;
+  }
+  select {
+    font-size: 16px;
+  }
 }
