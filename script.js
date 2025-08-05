@@ -8,7 +8,7 @@ let selectedCell = null;
 // Initialize the game when page loads
 window.onload = function() {
   startNewGame();
-  addKeyboardSupport();
+  disableKeyboardInput();
 };
 
 function startNewGame() {
@@ -27,6 +27,9 @@ function startNewGame() {
 
   // Clear selection
   selectedCell = null;
+
+  // Hide modal if visible
+  document.getElementById('completion-modal').style.display = 'none';
 }
 
 function generatePuzzle() {
@@ -136,14 +139,14 @@ function renderBoard(boardData) {
       input.dataset.row = r;
       input.dataset.col = c;
       input.type = "text";
+      input.readOnly = true;
+      input.style.caretColor = "transparent";
 
       if (cell !== 0) {
         input.value = cell;
         div.classList.add("prefilled");
         input.disabled = true;
-        input.readOnly = true;
       } else {
-        input.addEventListener("input", onInput);
         input.addEventListener("click", onCellClick);
         input.addEventListener("focus", onCellFocus);
       }
@@ -193,43 +196,53 @@ function selectCell(input) {
   });
 }
 
-function onInput(e) {
-  const val = e.target.value;
-  const isPencil = document.getElementById("pencilToggle").checked;
-
-  // Clear any previous styling
-  e.target.classList.remove('correct', 'incorrect', 'pencil');
-
-  if (!/^[1-9]$/.test(val)) {
-    e.target.value = '';
+// Handle number pad input
+function handlePadInput(value) {
+  if (!selectedCell || selectedCell.disabled) {
+    showMessage('Please select an empty cell first!', 'warning');
     return;
   }
 
-  const r = parseInt(e.target.dataset.row);
-  const c = parseInt(e.target.dataset.col);
+  if (value === 'clear') {
+    clearCell();
+    return;
+  }
+
+  const isPencil = document.getElementById("pencilToggle").checked;
+
+  // Clear any previous styling
+  selectedCell.classList.remove('correct', 'incorrect', 'pencil');
+  selectedCell.value = value;
+
+  const r = parseInt(selectedCell.dataset.row);
+  const c = parseInt(selectedCell.dataset.col);
   const correct = solution[r][c];
 
   if (!isPencil) {
-    if (parseInt(val) !== correct) {
-      e.target.classList.add('incorrect');
+    if (parseInt(value) !== correct) {
+      selectedCell.classList.add('incorrect');
       errorCount++;
       updateErrorCount();
 
       // Clear incorrect value after animation
       setTimeout(() => {
-        if (e.target.classList.contains('incorrect')) {
-          e.target.value = '';
-          e.target.classList.remove('incorrect');
+        if (selectedCell && selectedCell.classList.contains('incorrect')) {
+          selectedCell.value = '';
+          selectedCell.classList.remove('incorrect');
         }
-      }, 1000);
+      }, 1500);
     } else {
-      e.target.classList.add('correct');
-      e.target.disabled = true;
-      e.target.readOnly = true;
-      checkCompletion();
+      selectedCell.classList.add('correct');
+      selectedCell.disabled = true;
+      selectedCell.readOnly = true;
+
+      // Add subtle success effect
+      setTimeout(() => {
+        checkCompletion();
+      }, 100);
     }
   } else {
-    e.target.classList.add('pencil');
+    selectedCell.classList.add('pencil');
   }
 }
 
@@ -257,19 +270,33 @@ function checkCompletion() {
   if (allCorrect) {
     clearInterval(timerInterval);
     setTimeout(() => {
-      showCompletionMessage();
-    }, 500);
+      showCompletionModal();
+    }, 800);
   }
 }
 
-function showCompletionMessage() {
+function showCompletionModal() {
   const elapsed = Math.floor((Date.now() - startTime) / 1000);
   const minutes = Math.floor(elapsed / 60);
   const seconds = elapsed % 60;
-  const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
-  alert(`🎉 Congratulations! 🎉\n\nPuzzle completed in ${timeStr}\nErrors: ${errorCount}\n\nStarting new game...`);
+  document.getElementById('final-time').textContent = timeStr;
+  document.getElementById('final-errors').textContent = errorCount;
+  document.getElementById('completion-modal').style.display = 'block';
+}
+
+function closeModal() {
+  document.getElementById('completion-modal').style.display = 'none';
   startNewGame();
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+  const modal = document.getElementById('completion-modal');
+  if (event.target === modal) {
+    closeModal();
+  }
 }
 
 function startTimer() {
@@ -284,50 +311,75 @@ function startTimer() {
   }, 1000);
 }
 
-function addKeyboardSupport() {
+// Disable all keyboard input to cells
+function disableKeyboardInput() {
   document.addEventListener('keydown', (e) => {
-    if (!selectedCell || selectedCell.disabled) return;
+    // Only allow specific navigation keys
+    const allowedKeys = ['Tab', 'Escape'];
 
-    const key = e.key;
+    if (selectedCell && !selectedCell.disabled) {
+      // Arrow key navigation
+      const row = parseInt(selectedCell.dataset.row);
+      const col = parseInt(selectedCell.dataset.col);
+      let newRow = row, newCol = col;
 
-    // Number input
-    if (/^[1-9]$/.test(key)) {
-      selectedCell.value = key;
-      onInput({ target: selectedCell });
-    }
-
-    // Delete/Backspace
-    if (key === 'Delete' || key === 'Backspace') {
-      selectedCell.value = '';
-      selectedCell.classList.remove('correct', 'incorrect', 'pencil');
-    }
-
-    // Arrow key navigation
-    const row = parseInt(selectedCell.dataset.row);
-    const col = parseInt(selectedCell.dataset.col);
-    let newRow = row, newCol = col;
-
-    switch(key) {
-      case 'ArrowUp':
-        newRow = Math.max(0, row - 1);
-        break;
-      case 'ArrowDown':
-        newRow = Math.min(8, row + 1);
-        break;
-      case 'ArrowLeft':
-        newCol = Math.max(0, col - 1);
-        break;
-      case 'ArrowRight':
-        newCol = Math.min(8, col + 1);
-        break;
-    }
-
-    if (newRow !== row || newCol !== col) {
-      const newCell = document.querySelector(`input[data-row="${newRow}"][data-col="${newCol}"]`);
-      if (newCell && !newCell.disabled) {
-        newCell.focus();
-        selectCell(newCell);
+      switch(e.key) {
+        case 'ArrowUp':
+          e.preventDefault();
+          newRow = Math.max(0, row - 1);
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          newRow = Math.min(8, row + 1);
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          newCol = Math.max(0, col - 1);
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          newCol = Math.min(8, col + 1);
+          break;
+        case 'Escape':
+          selectedCell.blur();
+          selectedCell = null;
+          document.querySelectorAll('.cell').forEach(cell => {
+            cell.classList.remove('selected', 'highlight-row', 'highlight-col', 'highlight-box');
+          });
+          return;
+        default:
+          // Block all other keys including numbers
+          if (!allowedKeys.includes(e.key)) {
+            e.preventDefault();
+          }
+          return;
       }
+
+      if (newRow !== row || newCol !== col) {
+        const newCell = document.querySelector(`input[data-row="${newRow}"][data-col="${newCol}"]`);
+        if (newCell && !newCell.disabled) {
+          newCell.focus();
+          selectCell(newCell);
+        }
+      }
+    } else {
+      // Block number keys even when no cell is selected
+      if (/^[0-9]$/.test(e.key) || /^[1-9]$/.test(e.key)) {
+        e.preventDefault();
+      }
+    }
+  });
+
+  // Prevent paste operations
+  document.addEventListener('paste', (e) => {
+    e.preventDefault();
+  });
+
+  // Prevent input events on all inputs
+  document.addEventListener('input', (e) => {
+    if (e.target.matches('#sudoku-board input')) {
+      e.preventDefault();
+      e.target.value = '';
     }
   });
 }
@@ -335,7 +387,7 @@ function addKeyboardSupport() {
 // Additional game functions
 function getHint() {
   if (!selectedCell || selectedCell.disabled) {
-    alert('Please select an empty cell first!');
+    showMessage('Please select an empty cell first!', 'warning');
     return;
   }
 
@@ -348,12 +400,20 @@ function getHint() {
   selectedCell.disabled = true;
   selectedCell.readOnly = true;
 
+  // Add hint effect
+  selectedCell.style.animation = 'hintGlow 1s ease-out';
+  setTimeout(() => {
+    if (selectedCell) {
+      selectedCell.style.animation = '';
+    }
+  }, 1000);
+
   checkCompletion();
 }
 
 function clearCell() {
   if (!selectedCell || selectedCell.disabled) {
-    alert('Please select an editable cell first!');
+    showMessage('Please select an editable cell first!', 'warning');
     return;
   }
 
@@ -365,8 +425,13 @@ function validateBoard() {
   let hasErrors = false;
   const inputs = document.querySelectorAll('#sudoku-board input:not([disabled])');
 
+  if (inputs.length === 0) {
+    showMessage('Puzzle is already complete!', 'success');
+    return;
+  }
+
   inputs.forEach(input => {
-    if (input.value !== '') {
+    if (input.value !== '' && !input.classList.contains('pencil')) {
       const row = parseInt(input.dataset.row);
       const col = parseInt(input.dataset.col);
       const correctValue = solution[row][col];
@@ -376,14 +441,95 @@ function validateBoard() {
         hasErrors = true;
         setTimeout(() => {
           input.classList.remove('incorrect');
-        }, 2000);
+        }, 2500);
       }
     }
   });
 
   if (!hasErrors) {
-    alert('All current entries are correct! Keep going!');
+    showMessage('All current entries are correct! Keep going!', 'success');
   } else {
-    alert('Some entries are incorrect. They are highlighted in red.');
+    showMessage('Some entries are incorrect. They are highlighted in red.', 'error');
   }
 }
+
+// Enhanced message system
+function showMessage(text, type = 'info') {
+  // Remove existing messages
+  const existingMessage = document.querySelector('.game-message');
+  if (existingMessage) {
+    existingMessage.remove();
+  }
+
+  const message = document.createElement('div');
+  message.className = `game-message ${type}`;
+  message.textContent = text;
+
+  // Style the message
+  Object.assign(message.style, {
+    position: 'fixed',
+    top: '20px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    padding: '15px 25px',
+    borderRadius: '10px',
+    color: '#ffffff',
+    fontWeight: '600',
+    fontSize: '1rem',
+    zIndex: '1000',
+    opacity: '0',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)',
+    backdropFilter: 'blur(10px)'
+  });
+
+  // Set background based on type
+  switch(type) {
+    case 'success':
+      message.style.background = 'linear-gradient(145deg, rgba(34, 197, 94, 0.9), rgba(22, 163, 74, 0.9))';
+      message.style.border = '1px solid rgba(34, 197, 94, 0.5)';
+      break;
+    case 'error':
+      message.style.background = 'linear-gradient(145deg, rgba(239, 68, 68, 0.9), rgba(220, 38, 38, 0.9))';
+      message.style.border = '1px solid rgba(239, 68, 68, 0.5)';
+      break;
+    case 'warning':
+      message.style.background = 'linear-gradient(145deg, rgba(251, 191, 36, 0.9), rgba(245, 158, 11, 0.9))';
+      message.style.border = '1px solid rgba(251, 191, 36, 0.5)';
+      message.style.color = '#1a1a1a';
+      break;
+    default:
+      message.style.background = 'linear-gradient(145deg, rgba(64, 64, 64, 0.9), rgba(42, 42, 42, 0.9))';
+      message.style.border = '1px solid rgba(96, 96, 96, 0.5)';
+  }
+
+  document.body.appendChild(message);
+
+  // Animate in
+  setTimeout(() => {
+    message.style.opacity = '1';
+    message.style.transform = 'translateX(-50%) translateY(0)';
+  }, 10);
+
+  // Animate out
+  setTimeout(() => {
+    message.style.opacity = '0';
+    message.style.transform = 'translateX(-50%) translateY(-20px)';
+    setTimeout(() => {
+      if (message.parentNode) {
+        message.remove();
+      }
+    }, 300);
+  }, 3000);
+}
+
+// Add CSS for hint glow animation
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes hintGlow {
+    0% { box-shadow: 0 0 5px rgba(251, 191, 36, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(251, 191, 36, 0.6); }
+    100% { box-shadow: 0 0 5px rgba(251, 191, 36, 0.3); }
+  }
+`;
+document.head.appendChild(style);

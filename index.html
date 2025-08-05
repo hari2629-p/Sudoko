@@ -51,25 +51,71 @@
 
       <div class="board-container">
         <div id="sudoku-board"></div>
+
+        <!-- Enhanced Number Pad -->
+        <div class="number-pad-container">
+          <div class="number-pad">
+            <div class="number-row">
+              <button class="num-btn" onclick="handlePadInput(1)">1</button>
+              <button class="num-btn" onclick="handlePadInput(2)">2</button>
+              <button class="num-btn" onclick="handlePadInput(3)">3</button>
+            </div>
+            <div class="number-row">
+              <button class="num-btn" onclick="handlePadInput(4)">4</button>
+              <button class="num-btn" onclick="handlePadInput(5)">5</button>
+              <button class="num-btn" onclick="handlePadInput(6)">6</button>
+            </div>
+            <div class="number-row">
+              <button class="num-btn" onclick="handlePadInput(7)">7</button>
+              <button class="num-btn" onclick="handlePadInput(8)">8</button>
+              <button class="num-btn" onclick="handlePadInput(9)">9</button>
+            </div>
+            <div class="action-row">
+              <button class="clear-pad-btn" onclick="handlePadInput('clear')">
+                <i class="fas fa-eraser"></i> Clear
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="game-actions">
         <button class="action-btn hint-btn" onclick="getHint()">
           <i class="fas fa-lightbulb"></i> Hint
         </button>
-        <button class="action-btn clear-btn" onclick="clearCell()">
-          <i class="fas fa-eraser"></i> Clear
-        </button>
         <button class="action-btn validate-btn" onclick="validateBoard()">
           <i class="fas fa-check"></i> Validate
         </button>
       </div>
     </div>
+
+    <!-- Completion Modal -->
+    <div id="completion-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <i class="fas fa-trophy"></i>
+          <h2>Congratulations!</h2>
+        </div>
+        <div class="modal-body">
+          <p>You've completed the puzzle!</p>
+          <div class="stats">
+            <div class="stat">
+              <i class="fas fa-clock"></i>
+              <span>Time: <span id="final-time">00:00</span></span>
+            </div>
+            <div class="stat">
+              <i class="fas fa-exclamation-triangle"></i>
+              <span>Errors: <span id="final-errors">0</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="modal-btn" onclick="closeModal()">New Game</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="script.js"></script>
-  <footer class="footer">
-    <p>&copy; SUDOKO . A fun Project-hgp</p>
-  </footer>
 </body>
 </html>
