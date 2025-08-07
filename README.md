@@ -2,7 +2,7 @@
 
 A fully-featured, mobile-friendly Sudoku puzzle game built with **HTML, CSS, and JavaScript**.
 
-Play randomly generated puzzles, track your time and errors, and enjoy features like difficulty settings, pencil mode, auto new game on completion, and persistent save state!
+Play randomly generated puzzles, track your time and errors, and enjoy features like difficulty settings, pencil mode, auto new game on completion, and persistent save state(ON WORK)!
 
 ---
 
