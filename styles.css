@@ -13,6 +13,22 @@
   }
 }
 
+.theme-toggle{
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 8px;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  border: .45px solid #00000043;
+  background: black;
+  color: white;
+  cursor: pointer;
+}
+.theme-toggle:hover{
+      box-shadow: inset 0 0 1px 1px #7cdbff;
+}
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%, #0a0a0a 100%);
@@ -849,6 +865,13 @@ input:checked + .slider:before {
   .stats {
     gap: 20px;
   }
+    .clear-pad-btn{
+    font-size: 0px;
+  }
+  .clear-pad-btn i{
+    font-size: 1rem;
+    margin-right: 0px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1176,3 +1199,146 @@ input:checked + .slider:before {
     border-color: #ffffff;
   }
 }
+
+/* The theme is initialized from the preferred color scheme and can be
+   overridden by the theme toggle. */
+:root[data-theme="light"] {
+  body{
+    background: ghostwhite;
+  }
+  header h1{
+    color:#000000;
+  }
+  header p.subtitle{
+    color: #222222;
+  }
+  header h1 i{
+    color:#000;
+  }
+  .controls-panel{
+    background: white;
+  }
+  .control-group label{
+    color: #000;
+  }
+  select{
+    background: unset;
+    padding: 12px 20px;
+    color: black;
+    transition: 200ms;
+  }
+  select:hover{
+    /* background: unset; */
+    color: white;
+    transform:translateY(-4px) ;
+  }
+  .new-game-btn{
+    background: white;
+    color: black;
+    transition: 200ms;
+  }
+  .new-game-btn:hover{
+    color: white;
+  }
+  .slider{
+    background: linear-gradient(92deg, #333333, #444444, #fff 88%);
+    background-size: 370% 100%;
+    background-position-x: 100%;
+    transition:1000ms;
+  }
+  .slider::before{
+    background: linear-gradient(
+113deg, #333333, #444444, #fff 88%);
+    background-size: 400% 100%;
+    background-position-x: 0%;
+    transition: 400ms;
+  }
+  input:checked + .slider{
+    background: linear-gradient(92deg, #333333, #444444, #fff 88%);
+    background-size: 370% 100%;
+    background-position-x: 0%;
+    
+  }
+  input:checked + .slider::before{
+    background: linear-gradient(
+113deg, #333333, #444444, #fff 88%);
+    background-size: 400% 100%;
+    background-position-x: 97%;
+  
+  }
+  .label-text{
+    color:#222222;
+  }
+  .label-text i{
+    color:#222;
+  }
+  .info-card{
+    background: white;
+  }
+  .info-card span{
+    color:black;
+  }
+  .info-card i{
+    color: black;
+  }
+  .cell{
+    background: #fff;
+  }
+  .cell.prefilled{
+    background: #d0d0d0;
+  }
+  .cell.prefilled input{
+    color: #555;
+  }
+  .cell.highlight-row, .cell.highlight-col, .cell.highlight-box{
+        background: #ebf8ff !important;
+    box-shadow: inset 0 0 1px 1px #7cdbff;
+  }
+  .cell.prefilled.highlight-row input,.cell.prefilled.highlight-col input,.cell.prefilled.highlight-box input{
+    color: #00348e;
+  }
+  .cell:hover:not(.prefilled){
+    background: white;
+    box-shadow: inset 0 0 1px 3px #7cdbff;
+  }
+
+  .number-pad{
+    background: white;
+  }
+
+  .num-btn,.clear-pad-btn{
+    background: linear-gradient(145deg, #ffffff, #ffffff);
+    color: black;
+    box-shadow: unset;
+    border: .45px solid #d8d8d8;
+    transition: 200ms;
+    text-shadow: unset;
+  }
+  .num-btn:hover{
+    background: #fff;
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.2);
+    border: .45px solid #a2a2a2;
+  }
+  .action-btn{
+    background: white;
+    color:black;
+  }
+  .footer{
+        margin-top: 50px;
+    padding: 25px;
+    text-align: center;
+    background: white;
+    border-radius: 15px;
+    border: unset;
+    backdrop-filter: blur(15px);
+    box-shadow: unset;
+  }
+  .footer p{
+    text-shadow: unset;
+  }
+  .theme-toggle{
+    background: white;
+    color: #000;
+  }
+}
+
