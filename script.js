@@ -11,6 +11,13 @@ window.onload = function() {
   disableKeyboardInput();
 };
 
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./serviceworker.js")
+      .catch(error => console.error("Service worker registration failed:", error));
+  });
+}
+
 function startNewGame() {
   // Clear any existing timer
   clearInterval(timerInterval);
