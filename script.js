@@ -540,3 +540,28 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
+
+
+function setTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+
+  const themeToggle = document.querySelector('.theme-toggle');
+  if (themeToggle) {
+    const isLightTheme = theme === 'light';
+    themeToggle.setAttribute('aria-label', `Switch to ${isLightTheme ? 'dark' : 'light'} theme`);
+    themeToggle.setAttribute('aria-pressed', String(isLightTheme));
+  }
+}
+
+function toggleTheme() {
+  let currentTheme = ""
+  if(localStorage.getItem('theme')) {
+    currentTheme = localStorage.getItem('theme');
+  }
+  setTheme(currentTheme === 'light' ? 'dark' : 'light');
+  localStorage.setItem('theme', document.documentElement.dataset.theme);
+}
+
+if (localStorage.getItem('theme')) {
+  setTheme(localStorage.getItem('theme'));
+}
