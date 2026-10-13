@@ -29,6 +29,11 @@ Play randomly generated puzzles, track your time and errors, and enjoy features 
 - 🧱 **Clear 3×3 Box Outlines**  
   Thick borders for better visibility and gameplay comfort.
 
+- 🌚 **Dark Mode Toggle**  
+  Switch between Dark and Light Mode with ease.
+
+- 🤯 **PWA!!**  
+  Works Offline, anywhere, anytime using PWA
 ---
 
 ---
@@ -45,7 +50,7 @@ Play randomly generated puzzles, track your time and errors, and enjoy features 
 
 - [x] Add dark mode toggle 🌙  
 - [ ] Implement hint button or auto-solver 🤖  
-- [ ] Turn into a Progressive Web App (PWA) for offline play 📲  
+- [x] Turn into a Progressive Web App (PWA) for offline play 📲  
 - [ ] Track high scores or fastest completions 🏆
 
 ---
