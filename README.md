@@ -43,9 +43,9 @@ Play randomly generated puzzles, track your time and errors, and enjoy features 
 
 ## 📌 Future Improvements
 
-- [ ] Add dark mode toggle 🌙  
+- [x] Add dark mode toggle 🌙  
 - [ ] Implement hint button or auto-solver 🤖  
-- [ ] Turn into a Progressive Web App (PWA) for offline play 📲  
+- [x] Turn into a Progressive Web App (PWA) for offline play 📲  
 - [ ] Track high scores or fastest completions 🏆
 
 ---
