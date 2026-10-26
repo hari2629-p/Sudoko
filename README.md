@@ -20,6 +20,9 @@ Play randomly generated puzzles, track your time and errors, and enjoy features 
 - ⏱️ **Timer & Error Counter**  
   Track how long you take and how many mistakes you make.
 
+- 🏆 **Fastest Completion Times**
+  Save and view your best time for each difficulty. Games completed with a hint do not count.
+
 - 💾 **Save Game Progress**  
   Automatically saves your inputs and continues where you left off even after refresh.
 
@@ -51,7 +54,7 @@ Play randomly generated puzzles, track your time and errors, and enjoy features 
 - [x] Add dark mode toggle 🌙  
 - [ ] Implement hint button or auto-solver 🤖  
 - [x] Turn into a Progressive Web App (PWA) for offline play 📲  
-- [ ] Track high scores or fastest completions 🏆
+- [x] Track fastest completions by difficulty 🏆
 
 ---
 
@@ -66,6 +69,4 @@ Play randomly generated puzzles, track your time and errors, and enjoy features 
 ## 🙌 Author
 
 Made with ❤️ by [HGP]
-
-
 

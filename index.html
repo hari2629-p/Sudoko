@@ -66,6 +66,10 @@
           <i class="fas fa-exclamation-triangle"></i>
           <span id="errors">0</span>
         </div>
+        <div class="info-card">
+          <i class="fas fa-trophy"></i>
+          <span>Best: <span id="best-time" aria-live="polite">--:--</span></span>
+        </div>
       </div>
 
       <div class="board-container">
@@ -126,7 +130,15 @@
               <i class="fas fa-exclamation-triangle"></i>
               <span>Errors: <span id="final-errors">0</span></span>
             </div>
+            <div class="stat">
+              <i class="fas fa-trophy"></i>
+              <span>Best: <span id="final-best-time">--:--</span></span>
+            </div>
           </div>
+          <p id="new-best-message" class="new-best-message" hidden>New best!</p>
+          <p id="hint-used-message" class="completion-note" hidden>
+            Hint used — this completion won't count toward your best time.
+          </p>
         </div>
         <div class="modal-footer">
           <button class="modal-btn" onclick="closeModal()">New Game</button>

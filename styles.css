@@ -677,6 +677,15 @@ input:checked + .slider:before {
   font-weight: 600;
 }
 
+.new-best-message {
+  color: #22c55e !important;
+  font-weight: 700;
+}
+
+.completion-note {
+  font-size: 1rem !important;
+}
+
 .modal-footer {
   padding: 25px;
   text-align: center;
@@ -1341,4 +1350,3 @@ input:checked + .slider:before {
     color: #000;
   }
 }
-
