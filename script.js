@@ -2,8 +2,11 @@ let puzzle = [];
 let solution = [];
 let errorCount = 0;
 let timerInterval;
+let completionTimeout;
 let startTime;
 let selectedCell = null;
+let currentDifficulty = "medium";
+let hintUsed = false;
 
 // Initialize the game when page loads
 window.onload = function() {
@@ -21,8 +24,11 @@ if ("serviceWorker" in navigator) {
 function startNewGame() {
   // Clear any existing timer
   clearInterval(timerInterval);
+  clearTimeout(completionTimeout);
 
   // Generate new puzzle
+  currentDifficulty = document.getElementById("difficulty").value;
+  hintUsed = false;
   puzzle = generatePuzzle();
   solution = [...puzzle.solution];
   renderBoard(puzzle.board);
@@ -30,6 +36,7 @@ function startNewGame() {
   // Reset game state
   errorCount = 0;
   updateErrorCount();
+  updateBestTimeDisplay();
   startTimer();
 
   // Clear selection
@@ -276,20 +283,49 @@ function checkCompletion() {
 
   if (allCorrect) {
     clearInterval(timerInterval);
-    setTimeout(() => {
-      showCompletionModal();
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    completionTimeout = setTimeout(() => {
+      showCompletionModal(elapsed);
     }, 800);
   }
 }
 
-function showCompletionModal() {
-  const elapsed = Math.floor((Date.now() - startTime) / 1000);
+function formatElapsedTime(elapsed) {
   const minutes = Math.floor(elapsed / 60);
   const seconds = elapsed % 60;
-  const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
 
-  document.getElementById('final-time').textContent = timeStr;
+function getBestTime(difficulty) {
+  const savedTime = localStorage.getItem(`sudokuBestTime_${difficulty}`);
+  if (savedTime === null) return null;
+
+  const bestTime = Number(savedTime);
+  return Number.isInteger(bestTime) && bestTime >= 0 ? bestTime : null;
+}
+
+function updateBestTimeDisplay() {
+  const bestTime = getBestTime(currentDifficulty);
+  document.getElementById('best-time').textContent =
+    bestTime === null ? '--:--' : formatElapsedTime(bestTime);
+}
+
+function showCompletionModal(elapsed) {
+  let bestTime = getBestTime(currentDifficulty);
+  const isNewBest = !hintUsed && (bestTime === null || elapsed < bestTime);
+
+  if (isNewBest) {
+    bestTime = elapsed;
+    localStorage.setItem(`sudokuBestTime_${currentDifficulty}`, String(bestTime));
+    updateBestTimeDisplay();
+  }
+
+  document.getElementById('final-time').textContent = formatElapsedTime(elapsed);
   document.getElementById('final-errors').textContent = errorCount;
+  document.getElementById('final-best-time').textContent =
+    bestTime === null ? '--:--' : formatElapsedTime(bestTime);
+  document.getElementById('new-best-message').hidden = !isNewBest;
+  document.getElementById('hint-used-message').hidden = !hintUsed;
   document.getElementById('completion-modal').style.display = 'block';
 }
 
@@ -402,6 +438,7 @@ function getHint() {
   const col = parseInt(selectedCell.dataset.col);
   const correctValue = solution[row][col];
 
+  hintUsed = true;
   selectedCell.value = correctValue;
   selectedCell.classList.add('correct');
   selectedCell.disabled = true;
