@@ -298,6 +298,85 @@ input:checked + .slider:before {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
+/* Dog Companion */
+.dog-companion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: -10px auto 24px;
+  max-width: 500px;
+  width: 90vmin;
+  padding: 0 10px;
+}
+
+.dog-avatar {
+  font-size: 2.5rem;
+  line-height: 1;
+  user-select: none;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
+  flex-shrink: 0;
+}
+
+.dog-avatar:hover {
+  transform: scale(1.18) rotate(-6deg);
+}
+
+.dog-avatar.barking {
+  animation: dog-bark 0.55s ease-in-out;
+}
+
+.dog-bubble {
+  position: relative;
+  background: linear-gradient(145deg, rgba(40, 40, 40, 0.95), rgba(24, 24, 24, 0.95));
+  color: #f3f4f6;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px);
+  transition: all 0.25s ease;
+  min-height: 22px;
+  display: flex;
+  align-items: center;
+}
+
+.dog-bubble::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 8px solid rgba(40, 40, 40, 0.95);
+}
+
+.dog-bubble.trolling {
+  border-color: rgba(239, 68, 68, 0.6);
+  background: linear-gradient(145deg, rgba(55, 20, 20, 0.95), rgba(30, 12, 12, 0.95));
+  color: #fca5a5;
+  animation: bubble-pop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes dog-bark {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  20% { transform: rotate(-16deg) scale(1.15); }
+  40% { transform: rotate(14deg) scale(1.2); }
+  60% { transform: rotate(-10deg) scale(1.12); }
+  80% { transform: rotate(8deg) scale(1.05); }
+}
+
+@keyframes bubble-pop {
+  0% { transform: scale(0.92); opacity: 0.7; }
+  50% { transform: scale(1.04); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 .board-container {
   display: flex;
   flex-direction: column;
@@ -1348,5 +1427,19 @@ input:checked + .slider:before {
   .theme-toggle{
     background: white;
     color: #000;
+  }
+  .dog-bubble {
+    background: #ffffff;
+    color: #1f2937;
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  }
+  .dog-bubble::before {
+    border-right-color: #ffffff;
+  }
+  .dog-bubble.trolling {
+    background: #fef2f2;
+    color: #b91c1c;
+    border-color: rgba(239, 68, 68, 0.4);
   }
 }
