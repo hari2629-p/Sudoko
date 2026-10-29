@@ -7,6 +7,9 @@ let startTime;
 let selectedCell = null;
 let currentDifficulty = "medium";
 let hintUsed = false;
+let sharedChallenge = null;
+let challengeCompletionHandler = null;
+let gameCompleted = false;
 
 // Initialize the game when page loads
 window.onload = function() {
@@ -29,7 +32,13 @@ function startNewGame() {
   // Generate new puzzle
   currentDifficulty = document.getElementById("difficulty").value;
   hintUsed = false;
-  puzzle = generatePuzzle();
+  gameCompleted = false;
+  puzzle = sharedChallenge
+    ? {
+        board: sharedChallenge.board.map(row => [...row]),
+        solution: sharedChallenge.solution.map(row => [...row])
+      }
+    : generatePuzzle();
   solution = [...puzzle.solution];
   renderBoard(puzzle.board);
 
@@ -47,29 +56,52 @@ function startNewGame() {
   document.getElementById('completion-modal').style.display = 'none';
 }
 
-function generatePuzzle() {
+function generatePuzzle(seed, difficultyOverride) {
+  const random = seed === undefined ? Math.random : createSeededRandom(seed);
+  return generatePuzzleWithRandom(random, difficultyOverride);
+}
+
+function generatePuzzleWithRandom(random, difficultyOverride) {
   const board = Array.from({ length: 9 }, () => Array(9).fill(0));
-  fillDiagonalBlocks(board);
+  fillDiagonalBlocks(board, random);
   solveSudoku(board);
   const fullSolution = board.map(row => [...row]);
 
-  const difficulty = document.getElementById("difficulty")?.value || "medium";
+  const difficulty = difficultyOverride || document.getElementById("difficulty")?.value || "medium";
   let cellsToRemove = 40;
   if (difficulty === "easy") cellsToRemove = 35;
   else if (difficulty === "hard") cellsToRemove = 55;
 
-  removeCells(board, cellsToRemove);
+  removeCells(board, cellsToRemove, random);
   return { board, solution: fullSolution };
 }
 
-function fillDiagonalBlocks(board) {
+function createSeededRandom(seed) {
+  let state = 0;
+  for (const character of String(seed)) {
+    state = Math.imul(state ^ character.charCodeAt(0), 16777619);
+  }
+  return function() {
+    state += 0x6D2B79F5;
+    let value = state;
+    value = Math.imul(value ^ value >>> 15, value | 1);
+    value ^= value + Math.imul(value ^ value >>> 7, value | 61);
+    return ((value ^ value >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+function generateSeededPuzzle(seed) {
+  return generatePuzzle(seed, "medium");
+}
+
+function fillDiagonalBlocks(board, random = Math.random) {
   for (let i = 0; i < 9; i += 3) {
-    fillBlock(board, i, i);
+    fillBlock(board, i, i, random);
   }
 }
 
-function fillBlock(board, row, col) {
-  let nums = shuffle([1,2,3,4,5,6,7,8,9]);
+function fillBlock(board, row, col, random = Math.random) {
+  let nums = shuffle([1,2,3,4,5,6,7,8,9], random);
   for (let i = 0; i < 3; i++) {
     for (let j = 0; j < 3; j++) {
       board[row + i][col + j] = nums[i * 3 + j];
@@ -77,10 +109,10 @@ function fillBlock(board, row, col) {
   }
 }
 
-function shuffle(arr) {
+function shuffle(arr, random = Math.random) {
   const newArr = [...arr];
   for (let i = newArr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = Math.floor(random() * (i + 1));
     [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
   }
   return newArr;
@@ -127,10 +159,10 @@ function solveSudoku(board) {
   return true;
 }
 
-function removeCells(board, count) {
+function removeCells(board, count, random = Math.random) {
   while (count > 0) {
-    let row = Math.floor(Math.random() * 9);
-    let col = Math.floor(Math.random() * 9);
+    let row = Math.floor(random() * 9);
+    let col = Math.floor(random() * 9);
     if (board[row][col] !== 0) {
       board[row][col] = 0;
       count--;
@@ -267,6 +299,7 @@ function updateErrorCount() {
 }
 
 function checkCompletion() {
+  if (gameCompleted) return;
   const inputs = document.querySelectorAll('#sudoku-board input:not([disabled])');
   let allCorrect = true;
 
@@ -284,6 +317,7 @@ function checkCompletion() {
   }
 
   if (allCorrect) {
+    gameCompleted = true;
     clearInterval(timerInterval);
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
     completionTimeout = setTimeout(() => {
@@ -330,10 +364,33 @@ function showCompletionModal(elapsed) {
   document.getElementById('hint-used-message').hidden = !hintUsed;
   document.getElementById('completion-modal').style.display = 'block';
   cheerDogCompanion();
+  if (challengeCompletionHandler) {
+    challengeCompletionHandler({ elapsedSeconds: elapsed, mistakes: errorCount });
+  }
 }
 
 function closeModal() {
   document.getElementById('completion-modal').style.display = 'none';
+  startNewGame();
+}
+
+function startSharedChallenge(board, sharedSolution, onComplete) {
+  const validGrid = grid => Array.isArray(grid) && grid.length === 9 &&
+    grid.every(row => Array.isArray(row) && row.length === 9 &&
+      row.every(value => Number.isInteger(value) && value >= 0 && value <= 9));
+  if (!validGrid(board) || !validGrid(sharedSolution)) {
+    throw new Error("The shared puzzle data is invalid.");
+  }
+  sharedChallenge = { board, solution: sharedSolution };
+  challengeCompletionHandler = onComplete;
+  document.getElementById("difficulty").disabled = true;
+  startNewGame();
+}
+
+function leaveChallengeAndStartGame() {
+  sharedChallenge = null;
+  challengeCompletionHandler = null;
+  document.getElementById("difficulty").disabled = false;
   startNewGame();
 }
 

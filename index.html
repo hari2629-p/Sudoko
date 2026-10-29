@@ -34,17 +34,44 @@
     </header>
 
     <div class="game-wrapper">
+      <section class="challenge-panel" aria-labelledby="challenge-heading">
+        <h2 id="challenge-heading"><i class="fas fa-users"></i> Shared Challenges</h2>
+        <p>Race friends or the whole community on the same puzzle. No account required.</p>
+        <label class="challenge-label" for="challenge-username">Guest username</label>
+        <input id="challenge-username" class="challenge-input" maxlength="20" autocomplete="nickname" placeholder="Choose a username" />
+        <div class="challenge-actions">
+          <button id="daily-challenge" class="challenge-button" type="button">Daily Challenge</button>
+          <button id="create-room" class="challenge-button" type="button">Create Friend Room</button>
+        </div>
+        <form id="join-room-form" class="join-room-form">
+          <label class="challenge-label" for="room-code">Join a room</label>
+          <input id="room-code" class="challenge-input room-code-input" maxlength="6" autocomplete="off" placeholder="6-character room code" />
+          <button class="challenge-button" type="submit">Join Room</button>
+        </form>
+        <p id="challenge-status" class="challenge-status" role="status" aria-live="polite">
+          Shared challenges require the maintainer's Supabase configuration.
+        </p>
+        <section id="leaderboard" class="leaderboard" aria-labelledby="leaderboard-heading" hidden>
+          <div class="leaderboard-heading">
+            <h3 id="leaderboard-heading">Leaderboard</h3>
+            <button id="refresh-leaderboard" class="leaderboard-refresh" type="button">Refresh</button>
+          </div>
+          <p id="leaderboard-label" class="leaderboard-label"></p>
+          <ol id="leaderboard-entries" class="leaderboard-entries"></ol>
+        </section>
+      </section>
+
       <div class="controls-panel">
         <div class="control-group">
           <label for="difficulty"><i class="fas fa-cog"></i> Difficulty</label>
-          <select id="difficulty" onchange="startNewGame()">
+          <select id="difficulty" onchange="leaveChallengeAndStartGame()">
             <option value="easy">Easy</option>
             <option value="medium" selected>Medium</option>
             <option value="hard">Hard</option>
           </select>
         </div>
 
-        <button class="new-game-btn" onclick="startNewGame()">
+        <button class="new-game-btn" onclick="leaveChallengeAndStartGame()">
           <i class="fas fa-refresh"></i> New Game
         </button>
 
@@ -160,6 +187,7 @@
     </footer>
   </div>
 
-  <script src="script.js"></script>
+  <script src="/script.js"></script>
+  <script type="module" src="./challenges.js"></script>
 </body>
 </html>
