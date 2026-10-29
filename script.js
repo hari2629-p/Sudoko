@@ -36,6 +36,7 @@ function startNewGame() {
   // Reset game state
   errorCount = 0;
   updateErrorCount();
+  resetDogCompanion();
   updateBestTimeDisplay();
   startTimer();
 
@@ -237,6 +238,7 @@ function handlePadInput(value) {
       selectedCell.classList.add('incorrect');
       errorCount++;
       updateErrorCount();
+      trollOnMistake(errorCount);
 
       // Clear incorrect value after animation
       setTimeout(() => {
@@ -327,6 +329,7 @@ function showCompletionModal(elapsed) {
   document.getElementById('new-best-message').hidden = !isNewBest;
   document.getElementById('hint-used-message').hidden = !hintUsed;
   document.getElementById('completion-modal').style.display = 'block';
+  cheerDogCompanion();
 }
 
 function closeModal() {
@@ -494,6 +497,7 @@ function validateBoard() {
     showMessage('All current entries are correct! Keep going!', 'success');
   } else {
     showMessage('Some entries are incorrect. They are highlighted in red.', 'error');
+    trollOnMistake(errorCount);
   }
 }
 
@@ -601,4 +605,86 @@ function toggleTheme() {
 
 if (localStorage.getItem('theme')) {
   setTheme(localStorage.getItem('theme'));
+}
+
+// Dog Companion System (Trolls player on mistakes)
+const DOG_ROASTS = [
+  "Ruff guess! Even I know that's wrong. 🐾",
+  "Are you sure you know how numbers work? 🤔",
+  "Barking up the wrong cell, human! 🐶",
+  "I'm just a dog, but even I can count to 9.",
+  "That number is already in that box... awkward. 😬",
+  "Bold strategy! Completely wrong, but bold.",
+  "Did your paw slip or was that intentional? 🐾",
+  "Yikes! Should I fetch you an easier puzzle? 🦴",
+  "At this rate, my collar will expire before you finish.",
+  "Even a cat could solve this row! 🐱"
+];
+
+const DOG_SAVAGE_ROASTS = [
+  "Errors piling up! Should I hide under the sofa? 🛋️",
+  "I'd help you, but watching you struggle is hilarious. 🍿",
+  "Should I fetch you an easier game? Like Tic-Tac-Toe? 🐶",
+  "Don't worry, counting from 1 to 9 is hard for humans. 🦴"
+];
+
+function trollOnMistake(errors) {
+  const bubble = document.getElementById('dog-bubble');
+  const avatar = document.getElementById('dog-avatar');
+  if (!bubble || !avatar) return;
+
+  const pool = errors >= 4 ? DOG_SAVAGE_ROASTS : DOG_ROASTS;
+  const quote = pool[Math.floor(Math.random() * pool.length)];
+
+  bubble.textContent = quote;
+  bubble.classList.remove('trolling');
+  avatar.classList.remove('barking');
+
+  void bubble.offsetWidth;
+
+  bubble.classList.add('trolling');
+  avatar.classList.add('barking');
+}
+
+function resetDogCompanion() {
+  const bubble = document.getElementById('dog-bubble');
+  const avatar = document.getElementById('dog-avatar');
+  if (bubble) {
+    bubble.textContent = "Woof! Try not to embarrass us. 🐾";
+    bubble.classList.remove('trolling');
+  }
+  if (avatar) {
+    avatar.classList.remove('barking');
+  }
+}
+
+function cheerDogCompanion() {
+  const bubble = document.getElementById('dog-bubble');
+  const avatar = document.getElementById('dog-avatar');
+  if (bubble) {
+    bubble.textContent = "🎉 Pawsome job! You actually solved it without me losing all my fur!";
+    bubble.classList.remove('trolling');
+  }
+  if (avatar) {
+    avatar.classList.add('barking');
+  }
+}
+
+function petDogCompanion() {
+  const bubble = document.getElementById('dog-bubble');
+  const avatar = document.getElementById('dog-avatar');
+  if (bubble) {
+    const pokes = [
+      "Woof! Stop poking me and focus on the puzzle! 🐾",
+      "*Wags tail* Less petting, more solving!",
+      "I'm keeping my eyes on your numbers... 👀"
+    ];
+    bubble.textContent = pokes[Math.floor(Math.random() * pokes.length)];
+    bubble.classList.remove('trolling');
+  }
+  if (avatar) {
+    avatar.classList.remove('barking');
+    void avatar.offsetWidth;
+    avatar.classList.add('barking');
+  }
 }
