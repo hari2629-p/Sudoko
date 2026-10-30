@@ -273,10 +273,11 @@ function handlePadInput(value) {
       trollOnMistake(errorCount);
 
       // Clear incorrect value after animation
+      const cellToClear = selectedCell;
       setTimeout(() => {
-        if (selectedCell && selectedCell.classList.contains('incorrect')) {
-          selectedCell.value = '';
-          selectedCell.classList.remove('incorrect');
+        if (cellToClear && cellToClear.classList.contains('incorrect')) {
+          cellToClear.value = '';
+          cellToClear.classList.remove('incorrect');
         }
       }, 1500);
     } else {
@@ -505,10 +506,11 @@ function getHint() {
   selectedCell.readOnly = true;
 
   // Add hint effect
-  selectedCell.style.animation = 'hintGlow 1s ease-out';
+  const cell = selectedCell;
+  cell.style.animation = 'hintGlow 1s ease-out';
   setTimeout(() => {
-    if (selectedCell) {
-      selectedCell.style.animation = '';
+    if (cell) {
+      cell.style.animation = '';
     }
   }, 1000);
 
