@@ -13,6 +13,48 @@
   }
 }
 
+:root {
+  --challenge-panel-background: linear-gradient(145deg, rgba(32, 32, 32, 0.95), rgba(16, 16, 16, 0.95));
+  --challenge-panel-border: rgba(96, 96, 96, 0.35);
+  --challenge-panel-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --challenge-text: #e0e0e0;
+  --challenge-heading: #fff;
+  --challenge-muted-text: #aaa;
+  --challenge-label: #ccc;
+  --challenge-input-background: #171717;
+  --challenge-input-text: #fff;
+  --challenge-input-border: #555;
+  --challenge-focus: #888;
+  --challenge-button-background: #333;
+  --challenge-button-text: #fff;
+  --challenge-button-border: #555;
+  --challenge-button-hover: #484848;
+  --challenge-divider: #444;
+  --challenge-entry-divider: #333;
+  --challenge-entry-text: #eee;
+}
+
+:root[data-theme="light"] {
+  --challenge-panel-background: linear-gradient(145deg, #fff, #f8fafc);
+  --challenge-panel-border: #d1d5db;
+  --challenge-panel-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+  --challenge-text: #1f2937;
+  --challenge-heading: #111827;
+  --challenge-muted-text: #4b5563;
+  --challenge-label: #374151;
+  --challenge-input-background: #fff;
+  --challenge-input-text: #111827;
+  --challenge-input-border: #cbd5e1;
+  --challenge-focus: #2563eb;
+  --challenge-button-background: #f3f4f6;
+  --challenge-button-text: #1f2937;
+  --challenge-button-border: #cbd5e1;
+  --challenge-button-hover: #e5e7eb;
+  --challenge-divider: #d1d5db;
+  --challenge-entry-divider: #e5e7eb;
+  --challenge-entry-text: #1f2937;
+}
+
 .theme-toggle{
   position: absolute;
   top: 12px;
@@ -96,28 +138,28 @@ header h1 i {
 .challenge-panel {
   margin-bottom: 30px;
   padding: 24px;
-  color: #e0e0e0;
-  background: linear-gradient(145deg, rgba(32, 32, 32, 0.95), rgba(16, 16, 16, 0.95));
-  border: 1px solid rgba(96, 96, 96, 0.35);
+  color: var(--challenge-text);
+  background: var(--challenge-panel-background);
+  border: 1px solid var(--challenge-panel-border);
   border-radius: 18px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--challenge-panel-shadow);
 }
 
 .challenge-panel h2,
 .leaderboard-heading h3 {
-  color: #fff;
+  color: var(--challenge-heading);
   margin-bottom: 8px;
 }
 
 .challenge-panel > p {
-  color: #aaa;
+  color: var(--challenge-muted-text);
   margin-bottom: 18px;
 }
 
 .challenge-label {
   display: block;
   margin: 12px 0 7px;
-  color: #ccc;
+  color: var(--challenge-label);
   font-weight: 600;
 }
 
@@ -125,14 +167,14 @@ header h1 i {
   width: 100%;
   min-height: 44px;
   padding: 10px 12px;
-  color: #fff;
-  background: #171717;
-  border: 1px solid #555;
+  color: var(--challenge-input-text);
+  background: var(--challenge-input-background);
+  border: 1px solid var(--challenge-input-border);
   border-radius: 9px;
 }
 
 .challenge-input:focus {
-  outline: 2px solid #888;
+  outline: 2px solid var(--challenge-focus);
   outline-offset: 1px;
 }
 
@@ -148,9 +190,9 @@ header h1 i {
 .leaderboard-refresh {
   min-height: 42px;
   padding: 10px 16px;
-  color: #fff;
-  background: #333;
-  border: 1px solid #555;
+  color: var(--challenge-button-text);
+  background: var(--challenge-button-background);
+  border: 1px solid var(--challenge-button-border);
   border-radius: 9px;
   cursor: pointer;
   font: inherit;
@@ -159,7 +201,7 @@ header h1 i {
 
 .challenge-button:hover:not(:disabled),
 .leaderboard-refresh:hover:not(:disabled) {
-  background: #484848;
+  background: var(--challenge-button-hover);
 }
 
 .challenge-button:disabled,
@@ -182,14 +224,14 @@ header h1 i {
 
 .challenge-status {
   margin: 16px 0 0 !important;
-  color: #ccc !important;
+  color: var(--challenge-label) !important;
   font-size: 0.95rem;
 }
 
 .leaderboard {
   margin-top: 22px;
   padding-top: 18px;
-  border-top: 1px solid #444;
+  border-top: 1px solid var(--challenge-divider);
 }
 
 .leaderboard-heading {
@@ -224,17 +266,17 @@ header h1 i {
   justify-content: space-between;
   gap: 12px;
   padding: 10px 4px;
-  color: #eee;
-  border-bottom: 1px solid #333;
+  color: var(--challenge-entry-text);
+  border-bottom: 1px solid var(--challenge-entry-divider);
 }
 
 .leaderboard-entries li span:last-child {
-  color: #aaa;
+  color: var(--challenge-muted-text);
   text-align: right;
 }
 
 .leaderboard-entries .leaderboard-empty {
-  color: #aaa;
+  color: var(--challenge-muted-text);
 }
 
 .controls-panel {
