@@ -9,19 +9,6 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="maskable_icon_x192.png" sizes="192x192">
   <meta name="theme-color" content="#ffffff">
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('serviceworker.js')
-          .then(function(registration) {
-            console.log('Service Worker registered with scope:', registration.scope);
-          })
-          .catch(function(error) {
-            console.log('Service Worker registration failed:', error);
-          });
-      });
-    }
-  </script>
 </head>
 <body>
   <div class="container">
@@ -178,8 +165,6 @@
         </div>
       </div>
     </div>
-  </div>
-  </div>
 
     <!-- Footer -->
     <footer class="footer">

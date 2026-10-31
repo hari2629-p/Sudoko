@@ -27,14 +27,17 @@ self.addEventListener("fetch", event => {
   const request = event.request;
   const requestUrl = new URL(request.url);
 
-  if (request.method !== "GET" || requestUrl.origin !== self.location.origin) {
+  const isSameOrigin = requestUrl.origin === self.location.origin;
+  const isFontAwesome = requestUrl.origin === "https://cdnjs.cloudflare.com";
+
+  if (request.method !== "GET" || (!isSameOrigin && !isFontAwesome)) {
     return;
   }
 
   event.respondWith((async () => {
     try {
       const response = await fetch(request);
-      if (response.ok && response.type === "basic") {
+      if (response.ok && (response.type === "basic" || response.type === "cors")) {
         const cache = await caches.open(CACHE_NAME);
         await cache.put(request, response.clone());
       }
